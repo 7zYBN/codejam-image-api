@@ -1,0 +1,132 @@
+body, p {
+  padding: 0;
+  margin: 0;
+}
+
+.container {
+  margin: 0px 40px 0px 40px;
+  padding-top: 40px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.options-block {
+  width: 230px;
+  height: 250px;
+  margin: 0px 0px 30px 0px;
+  box-shadow: 0px 0px 5px 1px black;
+}
+
+.option {
+  padding: 20px 30px;
+  font-size: 20px;
+  display: flex;
+  justify-content: start;
+}
+
+.tool:nth-child(2) {
+  border-bottom: 1px solid black;
+}
+
+.icon {
+  margin-right: 30px;
+}
+
+input[type=color] {
+  display: none;
+}
+
+.current.icon, .previous.icon, .red.icon, .blue.icon {
+  width: 15px;
+  height: 15px;
+  border: 2px solid black;
+  border-radius: 50%;
+}
+
+.current.icon {
+  background-color: gray;
+}
+
+.previous.icon {
+  background-color: green;
+}
+
+.red.icon {
+  background-color: red;
+}
+
+.blue.icon {
+  background-color: blue;
+}
+
+.canvas {
+  width: 512px;
+  height: 512px;
+  image-rendering: pixelated;
+  box-shadow: 0px 0px 5px 1px black;
+}
+
+.palette {
+  display: flex;
+  justify-content: space-between;
+  font-size: 30px;
+  padding: 30px;
+  border-bottom: 2px solid black;
+}
+
+.nav {
+  display: flex;
+}
+
+.nav i {
+  margin-right: 20px;
+}
+
+.tool.option:not(:last-child):hover, .color.option:hover {
+  cursor: pointer;
+  background-color: rgb(204, 204, 204);
+}
+
+.tool.option:not(:last-child).selected-tool {
+  background-color: rgb(134, 134, 134);
+}
+
+.tool:last-child {
+  color: rgb(201, 201, 201);
+}
+
+.canvas_size_setter {
+  position: relative;
+}
+
+input[type="range"] {
+  margin-top: 60px;
+  cursor: pointer;
+  -webkit-appearance: none;
+  width: 512px;
+  height: 5px;
+  background-image: -webkit-gradient(linear, left top, right top, color-stop(100%, #df7164), color-stop(100%, #F5D0CC));
+}
+
+input[type="range"]:focus {
+  outline: none;
+}
+
+::-webkit-slider-thumb {
+  position: relative;
+  
+}
+
+output { 
+  position: absolute;
+  width: 45.18px;
+  height: 51.2px;
+  background-size: cover;
+  background: url('./valueBg.png') no-repeat;
+  text-align: center; 
+  color: white; 
+  display: inline-block; 
+  font: bold 15px/30px Georgia;
+  bottom: 20px;
+  right: -20px;
+}

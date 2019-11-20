@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
+  <link rel="stylesheet" href="style.css">
+  <title>Code Jam Image-API</title>
+  <script src="https://unpkg.com/netlify-auth-providers"></script>
+</head>
+<body>
+  <div class="palette">
+    <div class="nav"><i class="fas fa-bars"></i><div class="title">Code Jam Image-API</div></div>
+    <div class="auth_block">
+      <button class="auth_block--button">Log In</button>
+    </div>
+    <div class="settings"><i class="fas fa-ellipsis-v"></i></div>
+  </div>
+  
+  <div class="container">
+    <div class="left">
+      <div class="tools options-block">
+        <div class="tool option paint-bucket"><p class="icon"><i class="fas fa-fill-drip"></i></p><p class="text">Paint bucket</p> </div>
+        <div class="tool option choose-color"><p class="icon"><i class="fas fa-eye-dropper"></i></p><p class="text">Choose color</p></div>
+        <div class="tool option pencil"><p class="icon"><i class="fas fa-pencil-alt"></i></p><p class="text">Pencil</p></div>
+        <div class="tool option transform"><p class="icon"><i class="fas fa-random"></i></p><p class="text">Transform</p></div>
+      </div>
+      <div class="colors options-block">
+        <div class="color option">
+          <label for="color-input" class="current icon">
+            <input type="color" id="color-input" name="color-input">
+          </label>
+          <p class="text">Current color</p>
+        </div>
+        <div class="color option"><p class="previous icon"></p><p class="text">Prev color</p></div>
+        <div class="color option"><p class="red icon"></p><p class="text">red</p></div>
+        <div class="color option"><p class="blue icon"></p><p class="text">blue</p></div>
+      </div>
+    </div>
+    
+    <div class="canvas_container">
+      <div class="loader_container">
+        <button class="loader_container--load">Load</button>
+        <input type="text" class="loader_container--city_filter" placeholder="City: Minsk as default">
+        <button class="loader_container--black_and_white">B&W</button>
+      </div>
+      <canvas class="canvas" width="512" height="512"></canvas>
+      <div class="canvas_size_setter">
+        <output for="range">512</output>
+        <input type="range" id="range" name="range" min="128" max="512" value="512" step="128">
+      </div>
+    </div>
+    
+  </div>
+    
+  <script type="module" src="./index.js"></script>
+</body>
+</html>
