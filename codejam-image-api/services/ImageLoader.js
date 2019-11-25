@@ -1,11 +1,6 @@
 export default class ImageLoader {
-  constructor(url, options) {
-    this.url = url;
-    this._options = options;
-  }
-
-  async getData() {
-    const response = await fetch(this.url, this._options);
+  async getData(url, options) {
+    const response = await fetch(url, options);
     return response.json();
   }
 }

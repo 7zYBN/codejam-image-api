@@ -4,14 +4,25 @@ import ImageLoader from "../../services/ImageLoader.js";
 export default class App {
   constructor() {
     this._elements = {
-      current: document.querySelector(".current"),
-      previous: document.querySelector(".previous"),
-      tools: document.querySelector(".tools"),
-      canvas: document.querySelector(".canvas"),
+      "current": document.querySelector(".current"),
+      "current-icon": document.querySelector(".current.icon"),
+      "previous": document.querySelector(".previous"),
+      "tools": document.querySelector(".tools"),
+      "canvas": document.querySelector(".canvas"),
       "paint-bucket": document.querySelector(".paint-bucket"),
       "choose-color": document.querySelector(".choose-color"),
-      pencil: document.querySelector(".pencil"),
-      transform: document.querySelector(".transform"),
+      "pencil": document.querySelector(".pencil"),
+      "transform": document.querySelector(".transform"),
+      "authorization-container": document.querySelector(".auth_block"),
+      "authorization-button": document.querySelector(".auth_block--button"),
+      "resizer-output": document.querySelector("output"),
+      "range-input": document.querySelector("input[type=\"range\"]"),
+      "colors": document.querySelector(".colors"),
+      "color-input": document.querySelector("#color-input"),
+      "canvas-size-setter": document.querySelector(".canvas_size_setter"),
+      "load-button": document.querySelector(".loader_container--load"),
+      "B&W-button":document.querySelector(".loader_container--black_and_white"),
+      "city-filter": document.querySelector(".loader_container--city_filter")
     };
 
     this._state = { color: this._initCurrentStateColor() };
@@ -29,32 +40,31 @@ export default class App {
             Authorization: `token ${ data.token }`,
           },
         };
-        const imageLoader = new ImageLoader(url, options);
-        const fetchedObject = await imageLoader.getData();
+        const fetchedObject = await this._imageLoader.getData(url, options);
 
         this._createLoginElements(fetchedObject);
       }
     });
   }
 
-  _createLoginElements(fetchedObject) {
-    const container = document.querySelector(".auth_block");
-    const avatar = document.createElement("img");
+  _createLoginElements({avatar_url, login}) {
+    const container = this._elements['authorization-container'];
+    const avatar_image = document.createElement("img");
     const username = document.createElement("label");
 
-    avatar.src = fetchedObject.avatar_url;
-    avatar.width = 40;
-    username.innerHTML = fetchedObject.login;
+    avatar_image.src = avatar_url;
+    avatar_image.width = 40;
+    username.innerHTML = login;
 
     container.innerHTML = "";
-    container.appendChild(avatar);
+    container.appendChild(avatar_image);
     container.appendChild(username);
 
     return this;
   }
 
   _setLogInListener() {
-    document.querySelector(".auth_block--button").addEventListener("click", () => {
+    this._elements['authorization-button'].addEventListener("click", () => {
       this._auth();
     });
   }
@@ -89,7 +99,7 @@ export default class App {
     const storageInfo = {
       tool: this._state.tool,
       color: this._state.color,
-      resizerValue: document.querySelector("output").value,
+      resizerValue: this._elements['resizer-output'].value,
     };
 
     localStorage.setItem("state", JSON.stringify(storageInfo));
@@ -99,14 +109,15 @@ export default class App {
     const { current, previous } = this._elements;
 
     if (this._storage) {
-      document.querySelector("input[type=\"range\"]").value = this._storage.resizerValue;
+      this._elements["range-input"].value = this._storage.resizerValue;
       this._calculateResizerStyles();
       current.style.backgroundColor = this._storage.color.current;
       previous.style.backgroundColor = this._storage.color.previous;
       this._state.color = this._initCurrentStateColor();
     }
 
-    this._canvas = new Canvas(document.querySelector("output").value);
+    this._canvas = new Canvas(this._elements["resizer-output"].value);
+    this._imageLoader = new ImageLoader();
   }
 
   _setEventListeners() {
@@ -139,15 +150,15 @@ export default class App {
   }
 
   _setColorsListeners() {
-    const colors = document.querySelector(".colors");
+    const colors = this._elements.colors;
     const currentColorBlock = colors.firstElementChild;
-    const colorInput = document.querySelector("#color-input");
+    const colorInput = this._elements["color-input"];
 
     colors.addEventListener("click", () => {
       const color = event.target.closest(".color.option");
 
       if (color === currentColorBlock) {
-        document.querySelector(".current.icon").click();
+        this._elements["current-icon"].click();
       } else {
         this._changeColor(this._getComputedBackground(event.target.closest(".color").querySelector(".icon")));
       }
@@ -198,16 +209,16 @@ export default class App {
   }
 
   async _setCanvasButtonsListeners() {
-    const loadButton = document.querySelector(".loader_container--load");
-    const blackWhiteButton = document.querySelector(".loader_container--black_and_white");
+    const loadButton = this._elements["load-button"];
+    const blackWhiteButton = this._elements["B&W-button"];
 
     loadButton.addEventListener("click", this._loadClickHandler.bind(this));
     blackWhiteButton.addEventListener("click", this._blackAndWhiteClick.bind(this));
   }
 
   _calculateResizerStyles() {
-    const input = document.querySelector("input[type=\"range\"]");
-    const output = document.querySelector("output");
+    const input = this._elements["range-input"];
+    const output = this._elements["resizer-output"];
     const minValue = input.getAttribute("min");
     const maxValue = input.getAttribute("max");
     const percentForGradient = ((input.value - minValue) / (maxValue - minValue)) * 100;
@@ -221,11 +232,10 @@ export default class App {
   }
 
   _setSizerListeners() {
-    const input = document.querySelector("input[type=\"range\"]");
+    const input = this._elements["range-input"];
+    const sizeSetter = this._elements["canvas-size-setter"];
 
-    document.querySelector(".canvas_size_setter").addEventListener("mousedown", () => {
-      document.querySelector(".canvas_size_setter").addEventListener("mousemove", this._calculateResizerStyles);
-    });
+    sizeSetter.addEventListener("input", this._calculateResizerStyles.bind(this));
 
     input.addEventListener("change", () => {
       this._canvas.changeCanvasSize(input.value);
@@ -235,10 +245,9 @@ export default class App {
 
   async _loadClickHandler() {
     const APIKey = "fd14d3909c79a1a61f2c35af27cad8b53209dcfea9f8e641908b102bc35dcdd9";
-    const city = document.querySelector(".loader_container--city_filter").value || "Minsk";
+    const city = this._elements["city-filter"].value || "Minsk";
     const url = `https://api.unsplash.com/photos/random?query=town,${ city }&client_id=${ APIKey }`;
-    const imageLoader = new ImageLoader(url);
-    const fetchedObject = await imageLoader.getData();
+    const fetchedObject = await this._imageLoader.getData(url);
 
     this._canvas.draw(fetchedObject.urls.full);
   }
@@ -248,13 +257,13 @@ export default class App {
   }
 
   _getCoords() {
-    const box = this._elements.canvas.getBoundingClientRect();
-    const output = document.querySelector("output");
-    const top = ((event.pageY - box.top - window.pageYOffset) * output.value) / box.height;
-    const left = ((event.pageX - box.left - window.pageXOffset) * output.value) / box.width;
+    const {top, left, width, height} = this._elements.canvas.getBoundingClientRect();
+    const output = this._elements["resizer-output"];
+    const y = ((event.pageY - top - window.pageYOffset) * output.value) / height;
+    const x = ((event.pageX - left - window.pageXOffset) * output.value) / width;
 
     return {
-      top, left,
+      y, x
     };
   }
 
@@ -262,9 +271,9 @@ export default class App {
     document.addEventListener("keydown", () => {
       if (!event.target.closest(".canvas_container")) {
         const actionsDependedOnKey = {
-          KeyB: document.querySelector(".paint-bucket"),
-          KeyP: document.querySelector(".pencil"),
-          KeyC: document.querySelector(".choose-color"),
+          KeyB: this._elements["paint-bucket"],
+          KeyP: this._elements["pencil"],
+          KeyC: this._elements["choose-color"],
         };
 
         if (actionsDependedOnKey[event.code]) this._selectTool(actionsDependedOnKey[event.code]);
@@ -276,7 +285,7 @@ export default class App {
     const actionsDependedOnTool = {
       "Paint bucket": "paint-bucket",
       "Choose color": "choose-color",
-      Pencil: "pencil",
+      "Pencil": "pencil",
     };
 
     this._elements[actionsDependedOnTool[tool]].click();

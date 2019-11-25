@@ -11,8 +11,9 @@ export default class CanvasComponent {
   }
 
   get _virtualPixel() {
-    const realWidth = parseFloat(getComputedStyle(this._canvas).getPropertyValue("width"));
-    const realHeight = parseFloat(getComputedStyle(this._canvas).getPropertyValue("height"));
+    const style = getComputedStyle(this._canvas);
+    const realWidth = parseFloat(style.getPropertyValue("width"));
+    const realHeight = parseFloat(style.getPropertyValue("height"));
     const virtualWidth = this._canvas.width;
     const virtualHeight = this._canvas.height;
 
@@ -98,15 +99,15 @@ export default class CanvasComponent {
   }
 
   pickColor(coords) {
-    const colorArray = this._context.getImageData(coords.left, coords.top, 1, 1).data;
+    const colorArray = this._context.getImageData(coords.x, coords.y, 1, 1).data;
 
     return this._transformToRGBString(colorArray);
   }
 
   drawLine(coords, color) {
     const { width, height } = this._virtualPixel;
-    const rectWidthStart = Math.trunc(coords.left / width) * width;
-    const rectHeightStart = Math.trunc(coords.top / height) * height;
+    const rectWidthStart = Math.trunc(coords.x / width) * width;
+    const rectHeightStart = Math.trunc(coords.y / height) * height;
 
     this._context.fillStyle = color;
     this._context.fillRect(rectWidthStart, rectHeightStart, width, height);
